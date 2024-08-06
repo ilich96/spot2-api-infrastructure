@@ -13,6 +13,9 @@ jobs:
   test:
     name: "Test with Terratest"
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: ./test
 
     steps:
       - name: Checkout repository
