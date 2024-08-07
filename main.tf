@@ -80,6 +80,8 @@ module "ecs_service" {
         }
       ]
 
+      readonly_root_filesystem = false
+
       enable_cloudwatch_logging = false
 
       linux_parameters = {
@@ -200,7 +202,7 @@ module "alb" {
         healthy_threshold   = 5
         interval            = 30
         matcher             = "200"
-        path                = "/"
+        path                = "/up"
         port                = "traffic-port"
         protocol            = "HTTP"
         timeout             = 5
