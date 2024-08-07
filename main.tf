@@ -66,7 +66,7 @@ module "ecs_service" {
 
   # Container definition(s)
   container_definitions = {
-    (local.container_name) = {
+    (var.container_name) = {
       cpu       = 512
       memory    = 1024
       essential = true
