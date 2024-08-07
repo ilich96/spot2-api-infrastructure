@@ -81,7 +81,7 @@ module "ecs_service" {
       ]
 
       health_check = {
-        command  = ["CMD-SHELL", "curl -f http://localhost/${var.container_port}/up || exit 1"]
+        command  = ["CMD-SHELL", "curl -f http://localhost:${var.container_port}/up || exit 1"]
         interval = 300
       }
 
