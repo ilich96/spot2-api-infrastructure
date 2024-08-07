@@ -185,7 +185,7 @@ module "alb" {
       protocol = "HTTP"
 
       forward = {
-        target_group_key = "ex_ecs"
+        target_group_key = "spot2"
       }
     }
   }
