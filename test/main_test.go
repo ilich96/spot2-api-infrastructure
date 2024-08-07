@@ -41,6 +41,6 @@ func TestAwsEcsCluster(t *testing.T) {
 	terraform.InitAndApply(t, terraformOptions)
 
 	// Run `terraform output` to get the values of output variables and check they have the expected values.
-	output := terraform.Output(t, terraformOptions, "ecr_name")
+	output := terraform.Output(t, terraformOptions, "ecs_cluster_name")
 	assert.Equal(t, "spot2-cluster", output)
 }
