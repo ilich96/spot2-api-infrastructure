@@ -70,7 +70,7 @@ module "ecs_service" {
       cpu       = 512
       memory    = 1024
       essential = true
-      image     = "${var.ecs_image_name}:latest"
+      image     = "${var.ecs_image_name}:v0.2.0"
       port_mappings = [
         {
           name          = var.container_name
@@ -79,9 +79,6 @@ module "ecs_service" {
           protocol      = "tcp"
         }
       ]
-
-      # Example image used requires access to write to root filesystem
-      readonly_root_filesystem = false
 
       enable_cloudwatch_logging = false
 
