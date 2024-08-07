@@ -29,7 +29,7 @@ variable "ecs_image_name" {
 
 variable "container_name" {
   description = "Name of the container used by ECS."
-  default     = "ecsdemo-frontend"
+  default     = "spot2-api-backend"
   type        = string
 }
 
