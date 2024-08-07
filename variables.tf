@@ -3,3 +3,9 @@ variable "ecr_name" {
   default     = "spot2"
   type        = string
 }
+
+variable "ecs_cluster_name" {
+  description = "Name of the ECS cluster."
+  default     = "spot2-cluster"
+  type        = string
+}
