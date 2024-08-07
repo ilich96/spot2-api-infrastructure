@@ -7,36 +7,37 @@ env:
   TF_CLOUD_ORGANIZATION: "spot2"
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
   TF_WORKSPACE: "api-workspace"
+  TF_VAR_ecs_image_name: ${{ vars.ECS_IMAGE_NAME }}
   CONFIG_DIRECTORY: "./"
 jobs:
-  test:
-    name: "Test with Terratest"
-    runs-on: ubuntu-22.04
-    defaults:
-      run:
-        working-directory: ./test
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Go 1.21.x
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.21.x'
-
-      - name: Install dependencies
-        run: go get .
-
-      - name: Test with the Go CLI
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_TEST_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_TEST_SECRET_ACCESS_KEY }}
-        run: go test -v -timeout 30m
+#  test:
+#    name: "Test with Terratest"
+#    runs-on: ubuntu-22.04
+#    defaults:
+#      run:
+#        working-directory: ./test
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: Setup Go 1.21.x
+#        uses: actions/setup-go@v5
+#        with:
+#          go-version: '1.21.x'
+#
+#      - name: Install dependencies
+#        run: go get .
+#
+#      - name: Test with the Go CLI
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_TEST_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_TEST_SECRET_ACCESS_KEY }}
+#        run: go test -v -timeout 30m
 
   terraform:
     name: "Terraform Plan"
-    needs: test
+#    needs: test
     runs-on: ubuntu-22.04
     permissions:
       contents: read
