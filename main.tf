@@ -80,6 +80,11 @@ module "ecs_service" {
         }
       ]
 
+      health_check = {
+        command  = ["CMD-SHELL", "curl -f http://localhost/${var.container_port}/up || exit 1"]
+        interval = 300
+      }
+
       readonly_root_filesystem = false
 
       enable_cloudwatch_logging = false
