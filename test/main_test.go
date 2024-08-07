@@ -1,21 +1,19 @@
 package test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/aws"
-	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAws(t *testing.T) {
+func TestInfrastructure(t *testing.T) {
 	t.Parallel()
 
-	expectedElasticContainerRepositoryName := fmt.Sprintf("ecr-%s", random.UniqueId())
-	expectedElasticContainerServiceClusterName := fmt.Sprintf("ecs-cluster-%s", random.UniqueId())
+	expectedElasticContainerRepositoryName := "ecr-test"
+	expectedElasticContainerServiceClusterName := "ecs-cluster-test"
 
 	// Pick a random AWS region to test in. This helps ensure your code works in all regions.
 	awsRegion := aws.GetRandomStableRegion(t, []string{"us-east-1", "eu-west-1"}, nil)
