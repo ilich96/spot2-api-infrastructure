@@ -70,7 +70,7 @@ module "ecs_service" {
       cpu       = 512
       memory    = 1024
       essential = true
-      image     = "public.ecr.aws/aws-containers/ecsdemo-frontend:776fd50"
+      image     = var.ecs_image_name
       port_mappings = [
         {
           name          = var.container_name

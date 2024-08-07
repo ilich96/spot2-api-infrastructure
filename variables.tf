@@ -22,6 +22,11 @@ variable "ecs_service_name" {
   type        = string
 }
 
+variable "ecs_image_name" {
+  description = "Name of the image used by ECS."
+  type        = string
+}
+
 variable "container_name" {
   description = "Name of the container used by ECS."
   default     = "ecsdemo-frontend"
@@ -30,7 +35,7 @@ variable "container_name" {
 
 variable "container_port" {
   description = "Port of the container used by ECS."
-  default     = 3000
+  default     = 80
   type        = number
 }
 
