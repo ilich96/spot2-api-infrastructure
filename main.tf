@@ -231,6 +231,7 @@ module "vpc" {
   azs             = local.azs
   private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]
   public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)]
+  database_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 6)]
 
   enable_nat_gateway = true
   single_nat_gateway = true
@@ -249,4 +250,33 @@ resource "aws_s3_object" "dataset" {
   source = "datasets/catastro2021_ALVARO_OBREGON.csv"
 
   etag = filemd5("datasets/catastro2021_ALVARO_OBREGON.csv")
+}
+
+################################################################################
+# AWS Aurora
+################################################################################
+module "aurora_db" {
+  source  = "terraform-aws-modules/rds-aurora/aws"
+
+  name           = "spot2-aurora-db"
+  engine         = "aurora-postgresql"
+  engine_version = "14.5"
+  instance_class = "db.t4g"
+  instances = {
+    one = {}
+  }
+
+  vpc_id               = module.vpc.vpc_id
+  db_subnet_group_name = module.vpc.database_subnet_group_name
+  security_group_rules = {
+    vpc_ingress = {
+      cidr_blocks = module.vpc.private_subnets_cidr_blocks
+    }
+  }
+
+  storage_encrypted   = true
+  apply_immediately   = true
+  monitoring_interval = 10
+
+  enabled_cloudwatch_logs_exports = ["postgresql"]
 }
