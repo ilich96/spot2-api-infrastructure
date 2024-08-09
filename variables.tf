@@ -61,3 +61,13 @@ variable "s3_bucket_name" {
   description = "Name of the bucket used by S3."
   type        = string
 }
+
+variable "rds_master_username" {
+  description = "Username for the master DB user."
+  type        = string
+}
+
+variable "rds_master_password" {
+  description = "Username for the master DB user."
+  type        = string
+}
