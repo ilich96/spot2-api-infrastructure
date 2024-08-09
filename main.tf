@@ -283,3 +283,15 @@ module "aurora_db" {
 
   enabled_cloudwatch_logs_exports = ["postgresql"]
 }
+
+################################################################################
+# AWS Glue
+################################################################################
+resource "aws_glue_catalog_database" "spot2" {
+  name = "spot2-database"
+}
+
+resource "aws_glue_catalog_table" "spot2" {
+  name          = "spot2-table"
+  database_name = aws_glue_catalog_database.spot2.name
+}
