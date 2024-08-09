@@ -68,6 +68,6 @@ variable "rds_master_username" {
 }
 
 variable "rds_master_password" {
-  description = "Username for the master DB user."
+  description = "Password for the master DB user."
   type        = string
 }
