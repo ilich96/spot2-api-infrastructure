@@ -246,7 +246,7 @@ resource "aws_s3_bucket" "spot2" {
 
 resource "aws_s3_object" "dataset" {
   bucket = aws_s3_bucket.spot2.id
-  key    = "land_uses_dataset.csv"
+  key    = "/datasets/land_uses.csv"
   source = "datasets/catastro2021_ALVARO_OBREGON.csv"
 
   etag = filemd5("datasets/catastro2021_ALVARO_OBREGON.csv")
@@ -297,7 +297,7 @@ resource "aws_glue_crawler" "spot2" {
   role          = aws_iam_role.glue_role.arn
 
   s3_target {
-    path = "s3://${aws_s3_bucket.spot2.bucket}/"
+    path = "s3://${aws_s3_bucket.spot2.bucket}/datasets/"
   }
 
   configuration = jsonencode({
