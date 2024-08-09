@@ -240,7 +240,7 @@ module "vpc" {
 # AWS S3
 ################################################################################
 resource "aws_s3_bucket" "spot2" {
-  bucket = "spot2"
+  bucket = var.s3_bucket_name
 }
 
 resource "aws_s3_object" "dataset" {
