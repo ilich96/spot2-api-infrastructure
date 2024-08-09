@@ -274,6 +274,9 @@ module "aurora_db" {
     }
   }
 
+  master_username =
+  master_password =
+
   storage_encrypted   = true
   apply_immediately   = true
   monitoring_interval = 10

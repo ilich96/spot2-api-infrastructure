@@ -9,6 +9,8 @@ env:
   TF_WORKSPACE: "api-workspace"
   TF_VAR_ecs_image_name: ${{ vars.ECS_IMAGE_NAME }}
   TF_VAR_s3_bucket_name: ${{ vars.S3_BUCKET_NAME }}
+  TF_VAR_rds_master_username: ${{ vars.RDS_MASTER_USERNAME }}
+  TF_VAR_rds_master_password: ${{ vars.RDS_MASTER_PASSWORD }}
   CONFIG_DIRECTORY: "./"
 jobs:
 #  test:
