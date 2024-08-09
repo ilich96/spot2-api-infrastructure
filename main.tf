@@ -291,7 +291,70 @@ resource "aws_glue_catalog_database" "spot2" {
   name = "spot2-database"
 }
 
-resource "aws_glue_catalog_table" "spot2" {
-  name          = "spot2-table"
+resource "aws_glue_crawler" "spot2" {
   database_name = aws_glue_catalog_database.spot2.name
+  name          = "spot2-crawler"
+  role          = aws_iam_role.glue_role.arn
+
+  s3_target {
+    path = "s3://${aws_s3_bucket.spot2.bucket}/"
+  }
+
+  configuration = jsonencode({
+    "Version": 1.0,
+    "Grouping": {
+      "TableGroupingPolicy": "CombineCompatibleSchemas"
+    }
+  })
+
+  schema_change_policy {
+    delete_behavior = "LOG"
+    update_behavior = "UPDATE_IN_DATABASE"
+  }
+}
+
+resource "aws_iam_role" "glue_role" {
+  name = "glue-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action    = "sts:AssumeRole"
+        Effect    = "Allow"
+        Principal = {
+          Service = "glue.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "glue_role_policy" {
+  role = aws_iam_role.glue_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:ListBucket",
+        ]
+        Resource = [
+          aws_s3_bucket.spot2.arn,
+          "${aws_s3_bucket.spot2.arn}/*",
+        ]
+      },
+      {
+        Effect   = "Allow"
+        Action   = [
+          "glue:*",
+        ]
+        Resource = "*"
+      },
+    ]
+  })
 }
