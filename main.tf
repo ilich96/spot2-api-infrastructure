@@ -235,3 +235,18 @@ module "vpc" {
   enable_nat_gateway = true
   single_nat_gateway = true
 }
+
+################################################################################
+# AWS S3
+################################################################################
+resource "aws_s3_bucket" "spot2" {
+  bucket = "spot2"
+}
+
+resource "aws_s3_object" "dataset" {
+  bucket = aws_s3_bucket.spot2.id
+  key    = "land_uses_dataset"
+  source = "datasets/catastro2021_ALVARO_OBREGON.csv"
+
+  etag = filemd5("datasets/catastro2021_ALVARO_OBREGON.csv")
+}
