@@ -8,6 +8,7 @@ env:
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
   TF_WORKSPACE: "api-workspace"
   TF_VAR_ecs_image_name: ${{ vars.ECS_IMAGE_NAME }}
+  TF_VAR_s3_bucket_name: ${{ vars.S3_BUCKET_NAME }}
   CONFIG_DIRECTORY: "./"
 jobs:
 #  test:

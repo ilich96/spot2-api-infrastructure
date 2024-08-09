@@ -56,3 +56,8 @@ variable "vpc_name" {
   default     = "spot2-vpc"
   type        = string
 }
+
+variable "s3_bucket_name" {
+  description = "Name of the bucket used by S3."
+  type        = string
+}
