@@ -274,8 +274,8 @@ module "aurora_db" {
     }
   }
 
-  master_username =
-  master_password =
+  master_username = var.rds_master_username
+  master_password = var.rds_master_password
 
   storage_encrypted   = true
   apply_immediately   = true
