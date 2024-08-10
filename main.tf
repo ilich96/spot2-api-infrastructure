@@ -281,6 +281,7 @@ module "aurora_db" {
   storage_encrypted   = true
   apply_immediately   = true
   monitoring_interval = 10
+  skip_final_snapshot = true
 
   enabled_cloudwatch_logs_exports = ["postgresql"]
 }
