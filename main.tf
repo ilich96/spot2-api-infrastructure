@@ -518,12 +518,20 @@ resource "aws_iam_role_policy" "glue_role_policy" {
   })
 }
 
+data "aws_secretsmanager_secret" "aurora_password" {
+  arn = module.aurora_db.cluster_master_user_secret[0]["secret_arn"]
+}
+
+data "aws_secretsmanager_secret_version" "current" {
+  secret_id = data.aws_secretsmanager_secret.aurora_password.id
+}
+
 resource "aws_glue_connection" "aurora_connection" {
   name = "aurora-connection"
 
   connection_properties = {
     "JDBC_CONNECTION_URL" = "jdbc:postgresql://${module.aurora_db.cluster_endpoint}:${module.aurora_db.cluster_port}/${module.aurora_db.cluster_database_name}"
-    "USERNAME"            = module.aurora_db.cluster_master_user_secret[0]["secret_arn"]
+    "USERNAME"            = data.aws_secretsmanager_secret_version.current.secret_string
     "PASSWORD"            = "123"
   }
 
