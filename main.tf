@@ -340,7 +340,7 @@ module "aurora_db" {
   db_cluster_parameter_group_name        = "spot2"
   db_cluster_parameter_group_family      = "aurora-postgresql13"
   db_cluster_parameter_group_description = "spot2 cluster parameter group"
-  db_cluster_parameter_group_parameters = [
+  db_cluster_parameter_group_parameters  = [
     {
       name         = "password_encryption"
       value        = "md5"
@@ -348,8 +348,8 @@ module "aurora_db" {
     }
   ]
 
-  master_username = jsondecode(aws_secretsmanager_secret_version.aurora_secret_version.secret_string)["username"]
-  master_password = jsondecode(aws_secretsmanager_secret_version.aurora_secret_version.secret_string)["password"]
+  master_username             = jsondecode(aws_secretsmanager_secret_version.aurora_secret_version.secret_string)["username"]
+  manage_master_user_password = true
 
   storage_encrypted   = true
   apply_immediately   = true
