@@ -356,7 +356,12 @@ module "aurora_db" {
   monitoring_interval = 10
   skip_final_snapshot = true
 
-  iam_roles = [aws_iam_role.aurora.arn]
+  iam_roles = {
+    "rds_iam_role" = {
+      "feature_name" = "manage secrets",
+      "role_arn"     = aws_iam_role.aurora.arn,
+    }
+  }
 
   enabled_cloudwatch_logs_exports = ["postgresql"]
 }
