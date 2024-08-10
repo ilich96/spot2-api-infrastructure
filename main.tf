@@ -358,7 +358,7 @@ module "aurora_db" {
 
   iam_roles = {
     "rds_iam_role" = {
-      "feature_name" = "manage secrets",
+      "feature_name" = "secretsManager",
       "role_arn"     = aws_iam_role.aurora.arn,
     }
   }
