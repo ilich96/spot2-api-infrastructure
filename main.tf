@@ -279,8 +279,8 @@ module "aurora_db" {
     vpc_egress = {
       from_port   = 0
       to_port     = 65535
-      ip_protocol = "tcp"
-      cidr_ipv4   = "0.0.0.0/0"
+      ip_protocol = "all"
+      cidr_blocks   = ["0.0.0.0/0"]
     }
   }
 
