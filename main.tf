@@ -389,7 +389,7 @@ resource "aws_iam_role_policy" "glue_role_policy" {
             "logs:PutLogEvents",
         ],
         "Resource": [
-            "arn:aws:logs:*:*:*:/aws-glue/*"
+            "arn:aws:logs:*:*:*"
         ]
       },
     ]
