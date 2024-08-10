@@ -277,6 +277,7 @@ module "aurora_db" {
       cidr_blocks = module.vpc.private_subnets_cidr_blocks
     }
     vpc_egress = {
+      type        = "egress"
       from_port   = 0
       to_port     = 65535
       ip_protocol = "all"
