@@ -382,7 +382,7 @@ resource "aws_glue_connection" "aurora_connection" {
   }
 
   physical_connection_requirements {
-    availability_zone = var.region
+    availability_zone = local.azs[0]
     security_group_id_list = [module.aurora_db.security_group_id]
     subnet_id              = module.vpc.database_subnets[0]
   }
