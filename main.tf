@@ -368,7 +368,6 @@ resource "aws_iam_role_policy" "glue_role_policy" {
 
 resource "aws_glue_connection" "aurora_connection" {
   name = "aurora-connection"
-  asd = module.aurora_db.cluster_port
 
   connection_properties = {
     "JDBC_CONNECTION_URL" = "jdbc:mysql://${module.aurora_db.cluster_endpoint}:${module.aurora_db.cluster_port}/${module.aurora_db.cluster_database_name}"
