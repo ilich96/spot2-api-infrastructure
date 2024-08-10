@@ -523,8 +523,8 @@ resource "aws_glue_connection" "aurora_connection" {
 
   connection_properties = {
     "JDBC_CONNECTION_URL" = "jdbc:postgresql://${module.aurora_db.cluster_endpoint}:${module.aurora_db.cluster_port}/${module.aurora_db.cluster_database_name}"
-    "USERNAME"            = module.aurora_db.cluster_master_user_secret["secret_arn"]
-    "PASSWORD"            = module.aurora_db.cluster_master_user_secret
+    "USERNAME"            = module.aurora_db.cluster_master_user_secret[0]
+    "PASSWORD"            = "123"
   }
 
   physical_connection_requirements {
