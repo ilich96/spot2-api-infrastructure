@@ -255,58 +255,58 @@ resource "aws_s3_object" "dataset" {
 ################################################################################
 # AWS Aurora
 ################################################################################
-# module "aurora_db" {
-#   source  = "terraform-aws-modules/rds-aurora/aws"
-#
-#   name           = "spot2-aurora-db"
-#   database_name  = "spot2"
-#   engine         = "aurora-postgresql"
-#   engine_version = "14.5"
-#   instance_class = "db.t4g.medium"
-#   instances = {
-#     one = {}
-#   }
-#
-#   vpc_id               = module.vpc.vpc_id
-#   db_subnet_group_name = module.vpc.database_subnet_group_name
-#   security_group_rules = {
-#     vpc_ingress = {
-#       from_port   = 0
-#       to_port     = 65535
-#       protocol    = "tcp"
-#       source_security_group_id = module.aurora_db.security_group_id
-#     }
-#     vpc_egress = {
-#       type        = "egress"
-#       from_port   = 0
-#       to_port     = 65535
-#       ip_protocol = "-1"
-#       cidr_blocks   = ["0.0.0.0/0"]
-#     }
-#   }
-#
-#   create_db_cluster_parameter_group      = true
-#   db_cluster_parameter_group_name        = "spot2"
-#   db_cluster_parameter_group_family      = "aurora-postgresql14"
-#   db_cluster_parameter_group_description = "spot2 cluster parameter group"
-#   db_cluster_parameter_group_parameters = [
-#     {
-#       name         = "password_encryption"
-#       value        = "md5"
-#       apply_method = "immediate"
-#     }
-#   ]
-#
-#   master_username = var.rds_master_username
-#   master_password = var.rds_master_password
-#
-#   storage_encrypted   = true
-#   apply_immediately   = true
-#   monitoring_interval = 10
-#   skip_final_snapshot = true
-#
-#   enabled_cloudwatch_logs_exports = ["postgresql"]
-# }
+module "aurora_db" {
+  source  = "terraform-aws-modules/rds-aurora/aws"
+
+  name           = "spot2-aurora-db"
+  database_name  = "spot2"
+  engine         = "aurora-postgresql"
+  engine_version = "13.4"
+  instance_class = "db.t4g.medium"
+  instances = {
+    one = {}
+  }
+
+  vpc_id               = module.vpc.vpc_id
+  db_subnet_group_name = module.vpc.database_subnet_group_name
+  security_group_rules = {
+    vpc_ingress = {
+      from_port   = 0
+      to_port     = 65535
+      protocol    = "tcp"
+      source_security_group_id = module.aurora_db.security_group_id
+    }
+    vpc_egress = {
+      type        = "egress"
+      from_port   = 0
+      to_port     = 65535
+      ip_protocol = "-1"
+      cidr_blocks   = ["0.0.0.0/0"]
+    }
+  }
+
+  create_db_cluster_parameter_group      = true
+  db_cluster_parameter_group_name        = "spot2"
+  db_cluster_parameter_group_family      = "aurora-postgresql13"
+  db_cluster_parameter_group_description = "spot2 cluster parameter group"
+  db_cluster_parameter_group_parameters = [
+    {
+      name         = "password_encryption"
+      value        = "md5"
+      apply_method = "immediate"
+    }
+  ]
+
+  master_username = var.rds_master_username
+  master_password = var.rds_master_password
+
+  storage_encrypted   = true
+  apply_immediately   = true
+  monitoring_interval = 10
+  skip_final_snapshot = true
+
+  enabled_cloudwatch_logs_exports = ["postgresql"]
+}
 
 ################################################################################
 # AWS Glue
@@ -467,18 +467,18 @@ resource "aws_iam_role_policy" "glue_role_policy" {
   })
 }
 
-# resource "aws_glue_connection" "aurora_connection" {
-#   name = "aurora-connection"
-#
-#   connection_properties = {
-#     "JDBC_CONNECTION_URL" = "jdbc:postgresql://${module.aurora_db.cluster_endpoint}:${module.aurora_db.cluster_port}/${module.aurora_db.cluster_database_name}"
-#     "USERNAME"            = var.rds_master_username
-#     "PASSWORD"            = var.rds_master_password
-#   }
-#
-#   physical_connection_requirements {
-#     availability_zone = local.azs[0]
-#     security_group_id_list = [module.aurora_db.security_group_id]
-#     subnet_id              = module.vpc.database_subnets[0]
-#   }
-# }
+resource "aws_glue_connection" "aurora_connection" {
+  name = "aurora-connection"
+
+  connection_properties = {
+    "JDBC_CONNECTION_URL" = "jdbc:postgresql://${module.aurora_db.cluster_endpoint}:${module.aurora_db.cluster_port}/${module.aurora_db.cluster_database_name}"
+    "USERNAME"            = var.rds_master_username
+    "PASSWORD"            = var.rds_master_password
+  }
+
+  physical_connection_requirements {
+    availability_zone = local.azs[0]
+    security_group_id_list = [module.aurora_db.security_group_id]
+    subnet_id              = module.vpc.database_subnets[0]
+  }
+}
