@@ -274,8 +274,7 @@ module "aurora_db" {
       from_port   = 0
       to_port     = 65535
       protocol    = "tcp"
-      cidr_blocks   = ["0.0.0.0/0"]
-#       source_security_group_id = module.aurora_db.security_group_id
+      source_security_group_id = module.aurora_db.security_group_id
     }
     vpc_egress = {
       type        = "egress"
