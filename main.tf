@@ -298,7 +298,7 @@ module "aurora_db" {
     }
   ]
 
-  master_username             = jsondecode(aws_secretsmanager_secret_version.aurora_secret_version.secret_string)["username"]
+  master_username             = var.rds_master_username
   manage_master_user_password = true
 
   storage_encrypted   = true
