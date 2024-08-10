@@ -255,58 +255,58 @@ resource "aws_s3_object" "dataset" {
 ################################################################################
 # AWS Aurora
 ################################################################################
-module "aurora_db" {
-  source  = "terraform-aws-modules/rds-aurora/aws"
-
-  name           = "spot2-aurora-db"
-  database_name  = "spot2"
-  engine         = "aurora-postgresql"
-  engine_version = "13.7"
-  instance_class = "db.t4g.medium"
-  instances = {
-    one = {}
-  }
-
-  vpc_id               = module.vpc.vpc_id
-  db_subnet_group_name = module.vpc.database_subnet_group_name
-  security_group_rules = {
-    vpc_ingress = {
-      from_port   = 0
-      to_port     = 65535
-      protocol    = "tcp"
-      source_security_group_id = module.aurora_db.security_group_id
-    }
-    vpc_egress = {
-      type        = "egress"
-      from_port   = 0
-      to_port     = 65535
-      ip_protocol = "-1"
-      cidr_blocks   = ["0.0.0.0/0"]
-    }
-  }
-
-  create_db_cluster_parameter_group      = true
-  db_cluster_parameter_group_name        = "spot2"
-  db_cluster_parameter_group_family      = "aurora-postgresql13"
-  db_cluster_parameter_group_description = "spot2 cluster parameter group"
-  db_cluster_parameter_group_parameters = [
-    {
-      name         = "password_encryption"
-      value        = "md5"
-      apply_method = "immediate"
-    }
-  ]
-
-  master_username = var.rds_master_username
-  master_password = "diegochoque123"
-
-  storage_encrypted   = true
-  apply_immediately   = true
-  monitoring_interval = 10
-  skip_final_snapshot = true
-
-  enabled_cloudwatch_logs_exports = ["postgresql"]
-}
+# module "aurora_db" {
+#   source  = "terraform-aws-modules/rds-aurora/aws"
+#
+#   name           = "spot2-aurora-db"
+#   database_name  = "spot2"
+#   engine         = "aurora-postgresql"
+#   engine_version = "13.7"
+#   instance_class = "db.t4g.medium"
+#   instances = {
+#     one = {}
+#   }
+#
+#   vpc_id               = module.vpc.vpc_id
+#   db_subnet_group_name = module.vpc.database_subnet_group_name
+#   security_group_rules = {
+#     vpc_ingress = {
+#       from_port   = 0
+#       to_port     = 65535
+#       protocol    = "tcp"
+#       source_security_group_id = module.aurora_db.security_group_id
+#     }
+#     vpc_egress = {
+#       type        = "egress"
+#       from_port   = 0
+#       to_port     = 65535
+#       ip_protocol = "-1"
+#       cidr_blocks   = ["0.0.0.0/0"]
+#     }
+#   }
+#
+#   create_db_cluster_parameter_group      = true
+#   db_cluster_parameter_group_name        = "spot2"
+#   db_cluster_parameter_group_family      = "aurora-postgresql13"
+#   db_cluster_parameter_group_description = "spot2 cluster parameter group"
+#   db_cluster_parameter_group_parameters = [
+#     {
+#       name         = "password_encryption"
+#       value        = "md5"
+#       apply_method = "immediate"
+#     }
+#   ]
+#
+#   master_username = var.rds_master_username
+#   master_password = "diegochoque123"
+#
+#   storage_encrypted   = true
+#   apply_immediately   = true
+#   monitoring_interval = 10
+#   skip_final_snapshot = true
+#
+#   enabled_cloudwatch_logs_exports = ["postgresql"]
+# }
 
 ################################################################################
 # AWS Glue
@@ -354,131 +354,131 @@ resource "aws_iam_role" "glue_role" {
   })
 }
 
-resource "aws_iam_role_policy" "glue_role_policy" {
-  role = aws_iam_role.glue_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect   = "Allow"
-        Action   = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:ListBucket",
-        ]
-        Resource = [
-          aws_s3_bucket.spot2.arn,
-          "${aws_s3_bucket.spot2.arn}/*",
-        ]
-      },
-      {
-        Effect   = "Allow"
-        Action   = [
-          "glue:*",
-          "s3:GetBucketLocation",
-          "s3:ListBucket",
-          "s3:ListAllMyBuckets",
-          "s3:GetBucketAcl",
-          "ec2:DescribeVpcEndpoints",
-          "ec2:DescribeRouteTables",
-          "ec2:CreateNetworkInterface",
-          "ec2:DeleteNetworkInterface",
-          "ec2:DescribeNetworkInterfaces",
-          "ec2:DescribeSecurityGroups",
-          "ec2:DescribeSubnets",
-          "ec2:DescribeVpcAttribute",
-          "iam:ListRolePolicies",
-          "iam:GetRole",
-          "iam:GetRolePolicy",
-          "cloudwatch:PutMetricData",
-        ]
-        Resource = "*"
-      },
-      {
-        "Effect": "Allow",
-        "Action": [
-          "s3:CreateBucket"
-        ],
-        "Resource": [
-          "arn:aws:s3:::aws-glue-*"
-        ]
-      },
-      {
-        "Effect": "Allow",
-        "Action": [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:DeleteObject"
-        ],
-        "Resource": [
-          "arn:aws:s3:::aws-glue-*/*",
-          "arn:aws:s3:::*/*aws-glue-*/*"
-        ]
-      },
-      {
-        "Effect": "Allow",
-        "Action": [
-            "s3:GetObject"
-        ],
-        "Resource": [
-          "arn:aws:s3:::crawler-public*",
-          "arn:aws:s3:::aws-glue-*"
-        ]
-      },
-      {
-        Effect = "Allow",
-        Action = [
-          "rds-db:connect"
-        ],
-        Resource = "*"
-      },
-      {
-        "Effect": "Allow",
-        "Action": [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ],
-        "Resource": [
-          "arn:aws:logs:*:*:*:/aws-glue/*"
-        ]
-      },
-      {
-        "Effect": "Allow",
-        "Action": [
-          "ec2:CreateTags",
-          "ec2:DeleteTags"
-        ],
-        "Condition": {
-          "ForAllValues:StringEquals": {
-            "aws:TagKeys": [
-              "aws-glue-service-resource"
-            ]
-          }
-        },
-        "Resource": [
-          "arn:aws:ec2:*:*:network-interface/*",
-          "arn:aws:ec2:*:*:security-group/*",
-          "arn:aws:ec2:*:*:instance/*"
-        ]
-      }
-    ]
-  })
-}
-
-resource "aws_glue_connection" "aurora_connection" {
-  name = "aurora-connection"
-
-  connection_properties = {
-    "JDBC_CONNECTION_URL" = "jdbc:postgresql://${module.aurora_db.cluster_endpoint}:${module.aurora_db.cluster_port}/${module.aurora_db.cluster_database_name}"
-    "USERNAME"            = var.rds_master_username
-    "PASSWORD"            = 123456
-  }
-
-  physical_connection_requirements {
-    availability_zone = local.azs[0]
-    security_group_id_list = [module.aurora_db.security_group_id]
-    subnet_id              = module.vpc.database_subnets[0]
-  }
-}
+# resource "aws_iam_role_policy" "glue_role_policy" {
+#   role = aws_iam_role.glue_role.id
+#
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Effect   = "Allow"
+#         Action   = [
+#           "s3:GetObject",
+#           "s3:PutObject",
+#           "s3:ListBucket",
+#         ]
+#         Resource = [
+#           aws_s3_bucket.spot2.arn,
+#           "${aws_s3_bucket.spot2.arn}/*",
+#         ]
+#       },
+#       {
+#         Effect   = "Allow"
+#         Action   = [
+#           "glue:*",
+#           "s3:GetBucketLocation",
+#           "s3:ListBucket",
+#           "s3:ListAllMyBuckets",
+#           "s3:GetBucketAcl",
+#           "ec2:DescribeVpcEndpoints",
+#           "ec2:DescribeRouteTables",
+#           "ec2:CreateNetworkInterface",
+#           "ec2:DeleteNetworkInterface",
+#           "ec2:DescribeNetworkInterfaces",
+#           "ec2:DescribeSecurityGroups",
+#           "ec2:DescribeSubnets",
+#           "ec2:DescribeVpcAttribute",
+#           "iam:ListRolePolicies",
+#           "iam:GetRole",
+#           "iam:GetRolePolicy",
+#           "cloudwatch:PutMetricData",
+#         ]
+#         Resource = "*"
+#       },
+#       {
+#         "Effect": "Allow",
+#         "Action": [
+#           "s3:CreateBucket"
+#         ],
+#         "Resource": [
+#           "arn:aws:s3:::aws-glue-*"
+#         ]
+#       },
+#       {
+#         "Effect": "Allow",
+#         "Action": [
+#           "s3:GetObject",
+#           "s3:PutObject",
+#           "s3:DeleteObject"
+#         ],
+#         "Resource": [
+#           "arn:aws:s3:::aws-glue-*/*",
+#           "arn:aws:s3:::*/*aws-glue-*/*"
+#         ]
+#       },
+#       {
+#         "Effect": "Allow",
+#         "Action": [
+#             "s3:GetObject"
+#         ],
+#         "Resource": [
+#           "arn:aws:s3:::crawler-public*",
+#           "arn:aws:s3:::aws-glue-*"
+#         ]
+#       },
+#       {
+#         Effect = "Allow",
+#         Action = [
+#           "rds-db:connect"
+#         ],
+#         Resource = "*"
+#       },
+#       {
+#         "Effect": "Allow",
+#         "Action": [
+#           "logs:CreateLogGroup",
+#           "logs:CreateLogStream",
+#           "logs:PutLogEvents"
+#         ],
+#         "Resource": [
+#           "arn:aws:logs:*:*:*:/aws-glue/*"
+#         ]
+#       },
+#       {
+#         "Effect": "Allow",
+#         "Action": [
+#           "ec2:CreateTags",
+#           "ec2:DeleteTags"
+#         ],
+#         "Condition": {
+#           "ForAllValues:StringEquals": {
+#             "aws:TagKeys": [
+#               "aws-glue-service-resource"
+#             ]
+#           }
+#         },
+#         "Resource": [
+#           "arn:aws:ec2:*:*:network-interface/*",
+#           "arn:aws:ec2:*:*:security-group/*",
+#           "arn:aws:ec2:*:*:instance/*"
+#         ]
+#       }
+#     ]
+#   })
+# }
+#
+# resource "aws_glue_connection" "aurora_connection" {
+#   name = "aurora-connection"
+#
+#   connection_properties = {
+#     "JDBC_CONNECTION_URL" = "jdbc:postgresql://${module.aurora_db.cluster_endpoint}:${module.aurora_db.cluster_port}/${module.aurora_db.cluster_database_name}"
+#     "USERNAME"            = var.rds_master_username
+#     "PASSWORD"            = 123456
+#   }
+#
+#   physical_connection_requirements {
+#     availability_zone = local.azs[0]
+#     security_group_id_list = [module.aurora_db.security_group_id]
+#     subnet_id              = module.vpc.database_subnets[0]
+#   }
+# }
