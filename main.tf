@@ -298,7 +298,7 @@ module "aurora_db" {
   ]
 
   master_username = var.rds_master_username
-  master_password = var.rds_master_password
+  master_password = 123456
 
   storage_encrypted   = true
   apply_immediately   = true
@@ -473,7 +473,7 @@ resource "aws_glue_connection" "aurora_connection" {
   connection_properties = {
     "JDBC_CONNECTION_URL" = "jdbc:postgresql://${module.aurora_db.cluster_endpoint}:${module.aurora_db.cluster_port}/${module.aurora_db.cluster_database_name}"
     "USERNAME"            = var.rds_master_username
-    "PASSWORD"            = var.rds_master_password
+    "PASSWORD"            = 123456
   }
 
   physical_connection_requirements {
