@@ -370,6 +370,9 @@ resource "aws_iam_role_policy" "glue_role_policy" {
           "ec2:DescribeRouteTables",
           "ec2:DescribeSecurityGroups",
           "ec2:DescribeNetworkInterfaces",
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
         ]
         Resource = "*"
       },
