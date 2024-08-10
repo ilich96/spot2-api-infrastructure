@@ -261,7 +261,7 @@ module "aurora_db" {
   name           = "spot2-aurora-db"
   database_name  = "spot2"
   engine         = "aurora-postgresql"
-  engine_version = "13.4"
+  engine_version = "14.5"
   instance_class = "db.t4g.medium"
   instances = {
     one = {}
@@ -284,6 +284,18 @@ module "aurora_db" {
       cidr_blocks   = ["0.0.0.0/0"]
     }
   }
+
+  create_db_cluster_parameter_group      = true
+  db_cluster_parameter_group_name        = "spot2"
+  db_cluster_parameter_group_family      = "aurora-postgresql14"
+  db_cluster_parameter_group_description = "spot2 cluster parameter group"
+  db_cluster_parameter_group_parameters = [
+    {
+      name         = "password_encryption"
+      value        = "md5"
+      apply_method = "immediate"
+    }
+  ]
 
   master_username = var.rds_master_username
   master_password = var.rds_master_password
