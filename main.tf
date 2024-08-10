@@ -259,6 +259,7 @@ module "aurora_db" {
   source  = "terraform-aws-modules/rds-aurora/aws"
 
   name           = "spot2-aurora-db"
+  database_name  = "spot2"
   engine         = "aurora-postgresql"
   engine_version = "14.5"
   instance_class = "db.t4g.medium"
@@ -378,6 +379,6 @@ resource "aws_glue_connection" "aurora_connection" {
   physical_connection_requirements {
     availability_zone = var.region
     security_group_id_list = [module.aurora_db.security_group_id]
-    subnet_id              = one(module.vpc.database_subnets)
+    subnet_id              = module.vpc.database_subnets[0]
   }
 }
