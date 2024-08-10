@@ -280,7 +280,7 @@ module "aurora_db" {
       type        = "egress"
       from_port   = 0
       to_port     = 65535
-      ip_protocol = "all"
+      ip_protocol = "-1"
       cidr_blocks   = ["0.0.0.0/0"]
     }
   }
