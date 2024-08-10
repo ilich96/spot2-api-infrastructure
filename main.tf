@@ -367,6 +367,7 @@ resource "aws_iam_role_policy" "glue_role_policy" {
           "ec2:DescribeSubnets",
           "ec2:DescribeVpcs",
           "ec2:DescribeVpcEndpoints",
+          "ec2:DescribeRouteTables",
           "ec2:DescribeSecurityGroups",
           "ec2:DescribeNetworkInterfaces",
         ]
