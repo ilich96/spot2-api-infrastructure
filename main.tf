@@ -276,6 +276,12 @@ module "aurora_db" {
       protocol    = "tcp"
       cidr_blocks = module.vpc.private_subnets_cidr_blocks
     }
+    vpc_egress = {
+      from_port   = 0
+      to_port     = 65535
+      ip_protocol = "all"
+      cidr_blocks   = ["0.0.0.0/0"]
+    }
   }
 
   master_username = var.rds_master_username
