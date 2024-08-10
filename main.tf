@@ -255,6 +255,56 @@ resource "aws_s3_object" "dataset" {
 ################################################################################
 # AWS Aurora
 ################################################################################
+resource "aws_secretsmanager_secret" "aurora" {
+  name        = "aurora_credentials"
+  description = "Credentials for Aurora DB"
+}
+
+resource "aws_secretsmanager_secret_version" "aurora_secret_version" {
+  secret_id     = aws_secretsmanager_secret.aurora.id
+  secret_string = jsonencode({
+    username = var.rds_master_username
+    password = var.rds_master_password
+  })
+}
+
+resource "aws_iam_role" "aurora" {
+  name = "aurora"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action    = "sts:AssumeRole",
+      Effect    = "Allow",
+      Principal = {
+        Service = "rds.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_iam_policy" "aurora" {
+  name        = "aurora"
+  description = "Policy to allow RDS access to Secrets Manager"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action   = [
+        "secretsmanager:GetSecretValue",
+        "secretsmanager:DescribeSecret"
+      ],
+      Effect   = "Allow",
+      Resource = aws_secretsmanager_secret.aurora.arn
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "rds_iam_role_policy_attachment" {
+  role       = aws_iam_role.aurora.name
+  policy_arn = aws_iam_policy.aurora.arn
+}
+
 module "aurora_db" {
   source  = "terraform-aws-modules/rds-aurora/aws"
 
@@ -298,13 +348,20 @@ module "aurora_db" {
     }
   ]
 
-  master_username = var.rds_master_username
-  master_password = "diegochoque123"
+  master_username = jsondecode(aws_secretsmanager_secret_version.aurora_secret_version.secret_string)["username"]
+  master_password = jsondecode(aws_secretsmanager_secret_version.aurora_secret_version.secret_string)["password"]
 
   storage_encrypted   = true
   apply_immediately   = true
   monitoring_interval = 10
   skip_final_snapshot = true
+
+  iam_roles = {
+    "rds_iam_role" = {
+      "feature_name" = "manage secrets",
+      "role_arn"     = aws_iam_role.aurora.arn,
+    }
+  }
 
   enabled_cloudwatch_logs_exports = ["postgresql"]
 }
@@ -474,7 +531,7 @@ resource "aws_glue_connection" "aurora_connection" {
   connection_properties = {
     "JDBC_CONNECTION_URL" = "jdbc:postgresql://${module.aurora_db.cluster_endpoint}:${module.aurora_db.cluster_port}/${module.aurora_db.cluster_database_name}"
     "USERNAME"            = var.rds_master_username
-    "PASSWORD"            = 123456
+    "PASSWORD"            = var.rds_master_password
   }
 
   physical_connection_requirements {
