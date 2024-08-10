@@ -355,6 +355,30 @@ resource "aws_iam_role_policy" "glue_role_policy" {
         ]
         Resource = "*"
       },
+      {
+        Effect = "Allow",
+        Action = [
+          "rds-db:connect"
+        ],
+        Resource = "*"
+      }
     ]
   })
+}
+
+resource "aws_glue_connection" "aurora_connection" {
+  name = "aurora-connection"
+  asd = module.aurora_db.cluster_port
+
+  connection_properties = {
+    "JDBC_CONNECTION_URL" = "jdbc:mysql://${module.aurora_db.cluster_endpoint}:${module.aurora_db.cluster_port}/${module.aurora_db.cluster_database_name}"
+    "USERNAME"            = var.rds_master_username
+    "PASSWORD"            = var.rds_master_password
+  }
+
+  physical_connection_requirements {
+    availability_zone = var.region
+    security_group_id_list = [module.aurora_db.security_group_id]
+    subnet_id              = one(module.vpc.database_subnets)
+  }
 }
