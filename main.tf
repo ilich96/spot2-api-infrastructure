@@ -271,6 +271,9 @@ module "aurora_db" {
   db_subnet_group_name = module.vpc.database_subnet_group_name
   security_group_rules = {
     vpc_ingress = {
+      from_port   = 0
+      to_port     = 65535
+      protocol    = "tcp"
       cidr_blocks = module.vpc.private_subnets_cidr_blocks
     }
   }
