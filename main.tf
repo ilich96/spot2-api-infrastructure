@@ -354,6 +354,10 @@ resource "aws_iam_role_policy" "glue_role_policy" {
         Effect   = "Allow"
         Action   = [
           "glue:*",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeVpcs",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeNetworkInterfaces",
         ]
         Resource = "*"
       },
