@@ -9,7 +9,6 @@ def get_credentials() -> dict[str, str]:
     secret_name = os.getenv('SECRET_NAME')
     region_name = os.getenv('REGION_NAME')
 
-    # Create a Secrets Manager client
     session = boto3.session.Session()
     client = session.client(service_name='secretsmanager', region_name=region_name)
 
@@ -18,43 +17,54 @@ def get_credentials() -> dict[str, str]:
     except ClientError as e:
         raise Exception(f"Could not retrieve secret: {str(e)}")
 
-    secret = json.loads(get_secret_value_response['SecretString'])
-
-    return secret
+    return json.loads(get_secret_value_response['SecretString'])
 
 
 def lambda_handler(event, context):
-    # Retrieve the secret containing the database credentials
-    secret = get_credentials()
+    credentials = get_credentials()
     db_host = os.getenv('DB_HOST')
     db_port = os.getenv('DB_PORT')
-    db_user = secret['username']
-    db_password = secret['password']
+    db_user = credentials['username']
+    db_password = credentials['password']
     db_name = os.getenv('DB_NAME')
 
-    try:
-        # Connect to the Aurora database
-        conn = pg8000.connect(
-            host=db_host,
-            port=int(db_port),
-            user=db_user,
-            password=db_password,
-            database=db_name
-        )
+    conn = pg8000.connect(
+        host=db_host,
+        port=int(db_port),
+        user=db_user,
+        password=db_password,
+        database=db_name
+    )
 
-        # If connection is successful, return a success message
-        return {
-            'statusCode': 200,
-            'body': json.dumps('Connection successful!')
-        }
+    create_table_query = """
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT FROM information_schema.tables 
+                WHERE table_name = 'land_uses' AND table_schema = 'public'
+            ) THEN
+                CREATE TABLE public.land_uses (
+                    id SERIAL PRIMARY KEY,
+                    zip_code VARCHAR(10) NOT NULL,
+                    area_colony_type CHAR(1) NOT NULL,
+                    land_price FLOAT NOT NULL,
+                    ground_area FLOAT NOT NULL,
+                    construction_area FLOAT NOT NULL,
+                    subsidy FLOAT NOT NULL
+                );
+                CREATE INDEX idx_land_uses_zip_code ON public.land_uses(zip_code);
+                CREATE INDEX idx_land_uses_area_colony_type ON public.land_uses(area_colony_type);
+            END IF;
+        END $$;
+        """
 
-    except Exception as e:
-        # If connection fails, return the error message
-        return {
-            'statusCode': 500,
-            'body': json.dumps(f'Connection failed: {str(e)}')
-        }
-    finally:
-        # Ensure connection is closed if it was opened
-        if 'conn' in locals():
-            conn.close()
+    with conn.cursor() as cursor:
+        cursor.execute(create_table_query)
+        conn.commit()
+
+    conn.close()
+
+    return {
+        'statusCode': 200,
+        'body': 'Table creation query executed successfully'
+    }
