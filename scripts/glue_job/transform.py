@@ -39,7 +39,7 @@ df = df.drop(
     'alcaldia',
     'anio_construccion',
     'instal_esp',
-    'instal_esp',
+    'valor_unitario_suelo',
 )
 
 # Transformation: Apply the mappings
