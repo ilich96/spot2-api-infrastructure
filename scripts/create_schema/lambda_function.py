@@ -25,7 +25,7 @@ def get_credentials() -> dict[str, str]:
 
 def lambda_handler(event, context):
     # Retrieve the secret containing the database credentials
-    secret = get_secret()
+    secret = get_credentials()
     db_host = os.getenv('DB_HOST')
     db_port = os.getenv('DB_PORT')
     db_user = secret['username']
