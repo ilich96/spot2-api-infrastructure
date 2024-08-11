@@ -93,6 +93,25 @@ module "ecs_service" {
         {
           name  = "DB_PORT"
           value = module.aurora_db.cluster_port
+        },
+        {
+          name  = "DB_DATABASE"
+          value = module.aurora_db.cluster_database_name
+        },
+        {
+          name  = "DB_CONNECTION"
+          value = "pgsql"
+        }
+      ]
+
+      secrets = [
+        {
+          name = "DB_USERNAME"
+          valueFrom = "${module.aurora_db.cluster_master_user_secret[0]["secret_arn"]}:username"
+        },
+        {
+          name = "DB_PASSWORD"
+          valueFrom = "${module.aurora_db.cluster_master_user_secret[0]["secret_arn"]}:password"
         }
       ]
 
