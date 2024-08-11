@@ -1,5 +1,5 @@
 import os
-import psycopg2
+import pg8000
 import json
 import boto3
 from botocore.exceptions import ClientError
@@ -34,12 +34,12 @@ def lambda_handler(event, context):
 
     try:
         # Connect to the Aurora database
-        conn = psycopg2.connect(
+        conn = pg8000.connect(
             host=db_host,
-            port=db_port,
+            port=int(db_port),
             user=db_user,
             password=db_password,
-            dbname=db_name
+            database=db_name
         )
 
         # If connection is successful, return a success message
