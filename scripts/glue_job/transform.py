@@ -43,7 +43,7 @@ df = df.drop(
 )
 
 # Transformation: Apply the mappings
-df = df.withColumn('zip_code', F.col('codigo_postal').cast('string'))
+df = df.withColumn('zip_code', F.col('codigo_postal.long').cast('string'))
 df = df.withColumn('area_colony_type', F.substring('cve_vus', 1, 1))
 df = df.withColumn('land_price', F.col('valor_suelo').cast('float'))
 df = df.withColumn('ground_area', F.col('sup_terreno').cast('float'))
