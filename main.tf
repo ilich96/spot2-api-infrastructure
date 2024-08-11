@@ -85,6 +85,17 @@ module "ecs_service" {
         interval = 300
       }
 
+      environment = [
+        {
+          name  = "DB_HOST"
+          value = module.aurora_db.cluster_endpoint
+        },
+        {
+          name  = "DB_PORT"
+          value = module.aurora_db.cluster_port
+        }
+      ]
+
       readonly_root_filesystem = false
 
       enable_cloudwatch_logging = false
