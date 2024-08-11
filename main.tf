@@ -592,6 +592,8 @@ resource "aws_glue_job" "transform_and_load" {
     "--aurora_table_name"    = "public.land_uses"
   }
 
+  connections = [aws_glue_connection.aurora_connection]
+
   max_retries  = 1
   timeout      = 2880
   max_capacity = 10.0
