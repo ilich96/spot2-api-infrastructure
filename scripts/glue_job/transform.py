@@ -50,6 +50,15 @@ df = df.withColumn('ground_area', F.col('sup_terreno').cast('float'))
 df = df.withColumn('construction_area', F.col('sup_construccion').cast('float'))
 df = df.withColumn('subsidy', F.col('subsidio').cast('float'))
 
+df = df.drop(
+    'codigo_postal',
+    'cve_vus',
+    'valor_suelo',
+    'sup_terreno',
+    'sup_construccion',
+    'subsidio',
+)
+
 # Convert DataFrame back to DynamicFrame for Glue context
 mapped_dynamic_frame = DynamicFrame.fromDF(df, glueContext, "mapped_dynamic_frame")
 
