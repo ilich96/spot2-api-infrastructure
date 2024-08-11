@@ -321,13 +321,17 @@ resource "aws_lambda_function" "create_schema" {
   role          = aws_iam_role.lambda_exec.arn
   handler       = "lambda_function.lambda_handler"
 
+  vpc_config {
+    subnet_ids         = module.vpc.database_subnets
+    security_group_ids = [module.aurora_db.security_group_id]
+  }
+
   environment {
     variables = {
       DB_HOST     = module.aurora_db.cluster_endpoint
       DB_PORT     = module.aurora_db.cluster_port
       DB_NAME     = module.aurora_db.cluster_database_name
       SECRET_NAME = module.aurora_db.cluster_master_user_secret[0]["secret_arn"]
-      AWS_REGION  = var.region
     }
   }
 
