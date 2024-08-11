@@ -300,10 +300,11 @@ module "aurora_db" {
   master_username             = var.rds_master_username
   manage_master_user_password = true
 
-  storage_encrypted   = true
-  apply_immediately   = true
-  monitoring_interval = 10
-  skip_final_snapshot = true
+  storage_encrypted          = true
+  apply_immediately          = true
+  monitoring_interval        = 10
+  skip_final_snapshot        = true
+  auto_minor_version_upgrade = false
 
   enabled_cloudwatch_logs_exports = ["postgresql"]
 }
