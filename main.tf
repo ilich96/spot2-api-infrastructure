@@ -580,7 +580,7 @@ resource "aws_glue_job" "transform_and_load" {
   role_arn = aws_iam_role.glue_role.arn
   command {
     name            = "glueetl"
-    script_location = "s3://${aws_s3_bucket.spot2.bucket}/${aws_s3_object.glue_script.key}"
+    script_location = "s3://${aws_s3_bucket.spot2.bucket}${aws_s3_object.glue_script.key}"
     python_version  = "3"
   }
 
