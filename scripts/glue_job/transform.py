@@ -44,6 +44,7 @@ df = df.withColumn('subsidy', F.col('subsidio').cast('float'))
 mapped_dynamic_frame = DynamicFrame.fromDF(df, glueContext, "mapped_dynamic_frame")
 
 connection_options = {
+    "useConnectionProperties": true,
     "connectionName": args['glue_connection_name'],
     "dbtable": args['aurora_table_name'],
 }
