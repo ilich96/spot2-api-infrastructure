@@ -31,6 +31,14 @@ datasource0 = glueContext.create_dynamic_frame.from_catalog(
 
 # Convert to DataFrame for transformation
 df = datasource0.toDF()
+df.drop('fid')
+df.drop('fid_2')
+df.drop('calle_numero')
+df.drop('colonia')
+df.drop('alcaldia')
+df.drop('anio_construccion')
+df.drop('instal_esp')
+df.drop('valor_unitario_suelo')
 
 # Transformation: Apply the mappings
 df = df.withColumn('zip_code', F.col('codigo_postal').cast('string'))
