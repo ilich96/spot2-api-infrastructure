@@ -1,6 +1,8 @@
 import os
-import pg8000
+import psycopg2
 import json
+import boto3
+from botocore.exceptions import ClientError
 
 
 def get_credentials() -> dict[str, str]:
