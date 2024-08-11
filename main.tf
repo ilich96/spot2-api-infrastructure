@@ -261,7 +261,7 @@ module "aurora_db" {
   name           = "spot2-aurora-db"
   database_name  = "spot2"
   engine         = "aurora-postgresql"
-  engine_version = "13.7"
+  engine_version = "13.12"
   instance_class = "db.t4g.medium"
   instances = {
     one = {}
