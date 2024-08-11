@@ -566,3 +566,32 @@ resource "aws_glue_connection" "aurora_connection" {
     subnet_id              = module.vpc.database_subnets[0]
   }
 }
+
+resource "aws_s3_object" "glue_script" {
+  bucket = aws_s3_bucket.spot2.id
+  key    = "/glue/transform.py"
+  source = "scripts/glue_job/transform.py"
+
+  etag = filemd5("scripts/glue_job/transform.py")
+}
+
+resource "aws_glue_job" "transform_and_load" {
+  name     = "transform-and-load-job"
+  role_arn = aws_iam_role.glue_role.arn
+  command {
+    name            = "glueetl"
+    script_location = "s3://${aws_s3_bucket.spot2.bucket}/${aws_s3_object.glue_script.key}"
+    python_version  = "3"
+  }
+
+  default_arguments = {
+    "--glue_database_name"   = aws_glue_catalog_database.spot2.name
+    "--glue_table_name"      = "datasets"
+    "--glue_connection_name" = aws_glue_connection.aurora_connection.name
+    "--aurora_table_name"    = "public.land_uses"
+  }
+
+  max_retries  = 1
+  timeout      = 2880
+  max_capacity = 10.0
+}
