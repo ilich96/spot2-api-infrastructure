@@ -320,6 +320,7 @@ resource "aws_lambda_function" "create_schema" {
   runtime       = "python3.12"
   role          = aws_iam_role.lambda_exec.arn
   handler       = "lambda_function.lambda_handler"
+  timeout       = 30
 
   vpc_config {
     subnet_ids         = module.vpc.database_subnets
