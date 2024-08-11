@@ -585,6 +585,7 @@ resource "aws_glue_job" "transform_and_load" {
   }
 
   default_arguments = {
+    "--connections"          = aws_glue_connection.aurora_connection.name
     "--glue_database_name"   = aws_glue_catalog_database.spot2.name
     "--glue_table_name"      = "datasets"
     "--glue_connection_name" = aws_glue_connection.aurora_connection.name
