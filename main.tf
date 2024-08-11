@@ -359,6 +359,12 @@ resource "aws_iam_policy_attachment" "lambda_exec_policy" {
   roles      = [aws_iam_role.lambda_exec.name]
 }
 
+resource "aws_iam_policy_attachment" "lambda_vpc_exec_policy" {
+  name       = "lambda_vpc_exec_attachment"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  roles      = [aws_iam_role.lambda_exec.name]
+}
+
 resource "aws_iam_role_policy" "lambda_secrets_policy" {
   name = "lambda_secrets_policy"
   role = aws_iam_role.lambda_exec.id
