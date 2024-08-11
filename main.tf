@@ -392,6 +392,18 @@ resource "aws_glue_catalog_database" "spot2" {
   name = "spot2-database"
 }
 
+resource "aws_glue_classifier" "csv" {
+  name = "csv-classifier"
+
+  csv_classifier {
+    allow_single_column    = false
+    contains_header        = "PRESENT"
+    delimiter              = ","
+    disable_value_trimming = false
+    quote_symbol           = "\""
+  }
+}
+
 resource "aws_glue_crawler" "spot2" {
   database_name = aws_glue_catalog_database.spot2.name
   name          = "spot2-crawler"
@@ -407,6 +419,8 @@ resource "aws_glue_crawler" "spot2" {
       "TableGroupingPolicy": "CombineCompatibleSchemas"
     }
   })
+
+  classifiers = [aws_glue_classifier.csv.name]
 
   schema_change_policy {
     delete_behavior = "LOG"
