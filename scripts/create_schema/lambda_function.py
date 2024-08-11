@@ -50,7 +50,7 @@ def lambda_handler(event, context):
                     land_price FLOAT NOT NULL,
                     ground_area FLOAT NOT NULL,
                     construction_area FLOAT NOT NULL,
-                    subsidy FLOAT
+                    subsidy FLOAT NOT NULL
                 );
                 CREATE INDEX idx_land_uses_zip_code ON public.land_uses(zip_code);
                 CREATE INDEX idx_land_uses_area_colony_type ON public.land_uses(area_colony_type);
