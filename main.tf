@@ -308,6 +308,71 @@ module "aurora_db" {
   enabled_cloudwatch_logs_exports = ["postgresql"]
 }
 
+data "archive_file" "create_schema" {
+  type        = "zip"
+  source_dir = "${path.module}/scripts/create_schema/"
+  output_path = "create_schema.zip"
+}
+
+resource "aws_lambda_function" "create_schema" {
+  filename      = "create_schema.zip"
+  function_name = "create_schema"
+  runtime       = "python3.12"
+  role          = aws_iam_role.lambda_exec.arn
+  handler       = "lambda_function.lambda_handler"
+
+  environment {
+    variables = {
+      DB_HOST     = module.aurora_db.cluster_endpoint
+      DB_PORT     = module.aurora_db.cluster_port
+      DB_NAME     = module.aurora_db.cluster_database_name
+      SECRET_NAME = module.aurora_db.cluster_master_user_secret[0]["secret_arn"]
+      AWS_REGION  = var.region
+    }
+  }
+
+  source_code_hash = data.archive_file.create_schema.output_base64sha256
+}
+
+resource "aws_iam_role" "lambda_exec" {
+  name = "lambda_exec_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action    = "sts:AssumeRole",
+      Effect    = "Allow",
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_iam_policy_attachment" "lambda_exec_policy" {
+  name       = "lambda_exec_attachment"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  roles      = [aws_iam_role.lambda_exec.name]
+}
+
+resource "aws_iam_role_policy" "lambda_secrets_policy" {
+  name = "lambda_secrets_policy"
+  role = aws_iam_role.lambda_exec.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ],
+        Resource = module.aurora_db.cluster_master_user_secret[0]["secret_arn"]
+      }
+    ]
+  })
+}
+
 ################################################################################
 # AWS Glue
 ################################################################################
