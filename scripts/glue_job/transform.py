@@ -43,8 +43,16 @@ df = df.drop(
 )
 
 # Transformation: Apply the mappings
-df = df.withColumn('zip_code', F.col('codigo_postal.long').cast('string'))
-df = df.withColumn('area_colony_type', F.substring('cve_vus', 1, 1))
+df = df.withColumn(
+    'zip_code',
+    F.when(F.col('codigo_postal.long').isNull(), 'UNKNOWN')
+    .otherwise(F.col('codigo_postal.long').cast('string'))
+)
+df = df.withColumn(
+    'area_colony_type',
+    F.when(F.col('cve_vus').isNull(), 'U')
+    .otherwise(F.substring('cve_vus', 1, 1))
+)
 df = df.withColumn(
     'land_price',
     F.when(F.col('valor_suelo').isNull(), 0.0)
