@@ -107,11 +107,11 @@ module "ecs_service" {
       secrets = [
         {
           name = "DB_USERNAME"
-          valueFrom = "${module.aurora_db.cluster_master_user_secret[0]["secret_arn"]}:username"
+          valueFrom = "${module.aurora_db.cluster_master_user_secret[0]["secret_arn"]}:username::"
         },
         {
           name = "DB_PASSWORD"
-          valueFrom = "${module.aurora_db.cluster_master_user_secret[0]["secret_arn"]}:password"
+          valueFrom = "${module.aurora_db.cluster_master_user_secret[0]["secret_arn"]}:password::"
         }
       ]
 
