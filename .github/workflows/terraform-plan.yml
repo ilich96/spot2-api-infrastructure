@@ -38,6 +38,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_TEST_SECRET_ACCESS_KEY }}
           TF_VAR_s3_bucket_name: "dchoque-spot2-test"
           TF_VAR_rds_master_username: "dchoque"
+          TF_VAR_ecs_image_name: ${{ vars.TEST_ECS_IMAGE_NAME }}
         run: go test -v -timeout 30m
 
   terraform:
