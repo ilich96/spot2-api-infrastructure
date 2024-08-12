@@ -1,7 +1,7 @@
 # Spot2 Infrastructure
 
 ## Introduction
-This project sets up the infrastructure necessary for the project required by spot2.
+This project sets up the infrastructure necessary for the project required by Spot2.
 The infrastructure is deployed in AWS and uses the following services:
 - [Amazon Elastic Container Service](https://aws.amazon.com/ecs/)
 - [Amazon Elastic Container Registry](https://aws.amazon.com/ecr/)
