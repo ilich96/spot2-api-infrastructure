@@ -70,7 +70,7 @@ module "ecs_service" {
       cpu       = 512
       memory    = 1024
       essential = true
-      image     = "${var.ecs_image_name}:v0.2.0"
+      image     = "${var.ecs_image_name}:v0.14.6"
       port_mappings = [
         {
           name          = var.container_name
@@ -307,6 +307,12 @@ module "aurora_db" {
       to_port     = 65535
       protocol    = "tcp"
       source_security_group_id = module.aurora_db.security_group_id
+    }
+    ecs_ingress = {
+      from_port   = 5432
+      to_port     = 5432
+      protocol    = "tcp"
+      source_security_group_id = module.ecs_service.security_group_id
     }
     vpc_egress = {
       type        = "egress"
