@@ -70,7 +70,7 @@ module "ecs_service" {
       cpu       = 512
       memory    = 1024
       essential = true
-      image     = "${var.ecs_image_name}:v0.14.11"
+      image     = "${var.ecs_image_name}:v0.15.0"
       port_mappings = [
         {
           name          = var.container_name
