@@ -131,6 +131,8 @@ module "ecs_service" {
     }
   }
 
+  task_exec_secret_arns = [module.aurora_db.cluster_master_user_secret[0]["secret_arn"]]
+
   service_connect_configuration = {
     namespace = aws_service_discovery_http_namespace.this.arn
     service = {
